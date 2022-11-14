@@ -6,7 +6,7 @@
 
 FILE *file;
 
-void openPasswordFile(char* openingMode)
+void openPasswordFile(char *openingMode)
 {
     file = fopen("password.txt", openingMode);
 
@@ -17,8 +17,9 @@ void openPasswordFile(char* openingMode)
     }
 }
 
-FILE*  openAuxFile() {
-    FILE* auxFile = fopen("aux.txt", "w");
+FILE *openAuxFile()
+{
+    FILE *auxFile = fopen("aux.txt", "w");
 
     if (auxFile == NULL)
     {
@@ -29,15 +30,19 @@ FILE*  openAuxFile() {
     return auxFile;
 }
 
-void deleteFile(char* fileName) {
-    if (remove(fileName) != 0) {
+void deleteFile(char *fileName)
+{
+    if (remove(fileName) != 0)
+    {
         printf("The file is not deleted.");
     }
 }
 
-void renameFile(char *oldName, char *newName) {
+void renameFile(char *oldName, char *newName)
+{
     int result = rename(oldName, newName);
-    if (result != 0) {
+    if (result != 0)
+    {
         printf("The file is renamed successfully.");
     }
 }
@@ -123,7 +128,7 @@ void createNewPassword() // TODO rethink function name
 void deletePassword()
 {
     openPasswordFile("r+");
-    FILE* aux = openAuxFile();
+    FILE *aux = openAuxFile();
 
     char location[LEN], password[LEN], splittedString[LEN];
     clearArray(location, LEN);
@@ -134,7 +139,8 @@ void deletePassword()
     {
         strcpy(splittedString, password);
         char *token = strtok(splittedString, ":");
-        while(token != NULL) token = strtok(NULL, ":");
+        while (token != NULL)
+            token = strtok(NULL, ":");
 
         if (strcmp(splittedString, location))
         {
@@ -146,33 +152,38 @@ void deletePassword()
     deleteFile("password.txt");
     renameFile("aux.txt", "password.txt");
     fclose(aux);
-
 }
 
 void menu()
 {
     int choice;
-    printf("Welcome to PASSWORD MANAGER\n");
-    printf("1. Save Password\n");
-    printf("2. Delete Password\n");
-    printf("6. Generate Password\n");
-    scanf("%d", &choice);
-
-    switch (choice)
+    do
     {
-    case 1:
-        createNewPassword();
-        break;
-    case 2:
-        deletePassword();
-        break;
-    case 6:
-        generatePassword();
-        break;
-    default:
-        printf("Invalid choice\n");
-        break;
-    }
+        printf("Welcome to PASSWORD MANAGER\n");
+        printf("1. Save Password\n");
+        printf("2. Delete Password\n");
+        printf("6. Generate Password\n");
+        printf("0. Exit\n");
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+        case 1:
+            createNewPassword();
+            break;
+        case 2:
+            deletePassword();
+            break;
+        case 6:
+            generatePassword();
+            break;
+        case 0:
+            return;
+        default:
+            printf("\nInvalid choice\n\n");
+            break;
+        }
+    } while (choice != 0);
     // TODO run menu again until user exits
 }
 
