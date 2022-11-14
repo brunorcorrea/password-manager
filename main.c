@@ -30,19 +30,15 @@ FILE*  openAuxFile() {
 }
 
 void deleteFile(char* fileName) {
-    if (remove(fileName) == 0) {
-        printf("The file is deleted successfully.");
-    } else {
+    if (remove(fileName) != 0) {
         printf("The file is not deleted.");
     }
 }
 
 void renameFile(char *oldName, char *newName) {
     int result = rename(oldName, newName);
-    if (result == 0) {
+    if (result != 0) {
         printf("The file is renamed successfully.");
-    } else {
-        printf("The file could not be renamed.");
     }
 }
 
@@ -129,20 +125,21 @@ void deletePassword()
     openPasswordFile("r+");
     FILE* aux = openAuxFile();
 
-    int line = 0;
-    printf("Choose the line of your password to delete: \n");
-    scanf("%d",&line);
-    char password[LEN];
-    unsigned int linha_atual = 0;
+    char location[LEN], password[LEN], splittedString[LEN];
+    clearArray(location, LEN);
+    printf("Type location of password to delete: \n");
+    scanf("%s", location);
 
     while (fgets(password, LEN, file) != NULL)
     {
-        if (linha_atual != line)
+        strcpy(splittedString, password);
+        char *token = strtok(splittedString, ":");
+        while(token != NULL) token = strtok(NULL, ":");
+
+        if (strcmp(splittedString, location))
         {
-            printf("Linha: %d, Senha: %s\n", linha_atual, password);
             fputs(password, aux);
         }
-        linha_atual++;
     }
 
     fclose(file);
