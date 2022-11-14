@@ -66,16 +66,15 @@ void generatePassword()
     char capitalLetters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     char numbers[] = "0123456789";
     char simbols[] = "?!@#$%%&/+-";
-    char password[12];
+    char password[13];
 
-    clearArray(password, 12);
+    clearArray(password, 13);
 
     srand(time(NULL));
 
     for (int i = 0; i < 12; i++)
     {
         int random = rand() % 4;
-        printf("%d", random);
         switch (random)
         {
         case 0:
@@ -108,7 +107,7 @@ void createNewPassword()
 }
 
 void deletePassword()
-{//sexo
+{
     openPasswordFileReadAndWrite();
 
     int line = 0;
