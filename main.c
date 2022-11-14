@@ -6,9 +6,9 @@
 
 FILE *file;
 
-void openPasswordFileAppend()
+void openPasswordFile(char* openingMode)
 {
-    file = fopen("password.txt", "a");
+    file = fopen("password.txt", openingMode);
 
     if (file == NULL)
     {
@@ -17,14 +17,32 @@ void openPasswordFileAppend()
     }
 }
 
-void openPasswordFileReadAndWrite()
-{
-    file = fopen("password.txt", "r+");
+FILE*  openAuxFile() {
+    FILE* auxFile = fopen("aux.txt", "w");
 
-    if (file == NULL)
+    if (auxFile == NULL)
     {
         printf("Error opening file!");
         exit(1);
+    }
+
+    return auxFile;
+}
+
+void deleteFile(char* fileName) {
+    if (remove(fileName) == 0) {
+        printf("The file is deleted successfully.");
+    } else {
+        printf("The file is not deleted.");
+    }
+}
+
+void renameFile(char *oldName, char *newName) {
+    int result = rename(oldName, newName);
+    if (result == 0) {
+        printf("The file is renamed successfully.");
+    } else {
+        printf("The file could not be renamed.");
     }
 }
 
@@ -38,7 +56,7 @@ void clearArray(char *array, int size)
 
 void savePassword(char *password)
 {
-    openPasswordFileAppend();
+    openPasswordFile("a");
 
     char data[255], location[100];
     clearArray(data, 255);
@@ -60,7 +78,7 @@ void savePassword(char *password)
 
 void generatePassword()
 {
-    openPasswordFileAppend();
+    openPasswordFile("a");
 
     char letters[] = "abcdefghijklmnopqrstuvwxyz";
     char capitalLetters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -95,7 +113,7 @@ void generatePassword()
     savePassword(password);
 }
 
-void createNewPassword()
+void createNewPassword() // TODO rethink function name
 {
     char password[100], c;
     clearArray(password, 100);
@@ -108,25 +126,30 @@ void createNewPassword()
 
 void deletePassword()
 {
-    openPasswordFileReadAndWrite();
+    openPasswordFile("r+");
+    FILE* aux = openAuxFile();
 
     int line = 0;
     printf("Choose the line of your password to delete: \n");
     scanf("%d",&line);
     char password[LEN];
-    unsigned int linha_atual = 1;
+    unsigned int linha_atual = 0;
 
     while (fgets(password, LEN, file) != NULL)
     {
         if (linha_atual != line)
         {
-            printf("Linha: %d, Senha: %s\n", line, password);
-            fputs(password, file);
+            printf("Linha: %d, Senha: %s\n", linha_atual, password);
+            fputs(password, aux);
         }
         linha_atual++;
     }
 
     fclose(file);
+    deleteFile("password.txt");
+    renameFile("aux.txt", "password.txt");
+    fclose(aux);
+
 }
 
 void menu()
