@@ -148,10 +148,89 @@ void deletePassword()
         }
     }
 
+    //TODO show error message if password not found
+
     fclose(file);
     deleteFile("password.txt");
     renameFile("aux.txt", "password.txt");
     fclose(aux);
+}
+
+void editPassword() {
+    openPasswordFile("r+");
+    FILE *aux = openAuxFile();
+
+    char location[LEN], password[LEN], splittedString[LEN], newPassword[100], data[255];
+    clearArray(location, LEN);
+    clearArray(data, LEN);
+    printf("Type location of password to edit: \n");
+    scanf("%s", location);
+
+    while (fgets(password, LEN, file) != NULL)
+    {
+        strcpy(splittedString, password);
+        char *token = strtok(splittedString, ":");
+        while (token != NULL)
+            token = strtok(NULL, ":");
+
+        if (!strcmp(splittedString, location))
+        {
+            printf("Enter new password: \n");
+            scanf("%s", newPassword);
+            strcat(data, location);
+            strcat(data, ":");
+            strcat(data, newPassword);
+            strcat(data, "\n");
+        
+            fputs(data, aux);
+        }
+        else fputs(password, aux);
+    }
+
+    //TODO show error message if password not found
+
+    fclose(file);
+    deleteFile("password.txt");
+    renameFile("aux.txt", "password.txt");
+    fclose(aux);
+}
+
+void listPasswords() {
+    openPasswordFile("r");
+
+    char password[LEN];
+    clearArray(password, LEN);
+
+    while (fgets(password, LEN, file) != NULL)
+    {
+        printf("%s", password);
+    }
+
+    fclose(file);
+}
+
+void viewPassword() {
+    openPasswordFile("r");
+
+    char location[LEN], password[LEN], splittedString[LEN];
+    clearArray(location, LEN);
+    printf("Type location of password to view: \n");
+    scanf("%s", location);
+
+    while (fgets(password, LEN, file) != NULL)
+    {
+        strcpy(splittedString, password);
+        char *token = strtok(splittedString, ":");
+        while (token != NULL)
+            token = strtok(NULL, ":");
+
+        if (!strcmp(splittedString, location))
+        {
+            printf("%s", password);
+        }
+    }
+
+    //TODO show error message if password not found
 }
 
 void menu()
@@ -162,6 +241,9 @@ void menu()
         printf("Welcome to PASSWORD MANAGER\n");
         printf("1. Save Password\n");
         printf("2. Delete Password\n");
+        printf("3. Edit Password\n");
+        printf("4. List Passwords\n");
+        printf("5. View Password\n");
         printf("6. Generate Password\n");
         printf("0. Exit\n");
         scanf("%d", &choice);
@@ -174,6 +256,15 @@ void menu()
         case 2:
             deletePassword();
             break;
+        case 3:
+            editPassword();
+            break;
+        case 4:
+            listPasswords();
+            break;
+        case 5:
+            viewPassword();
+            break;
         case 6:
             generatePassword();
             break;
@@ -184,7 +275,6 @@ void menu()
             break;
         }
     } while (choice != 0);
-    // TODO run menu again until user exits
 }
 
 int main(void)
