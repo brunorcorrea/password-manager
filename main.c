@@ -12,14 +12,18 @@ void openPasswordFile(char *openingMode)
 
     if (file == NULL)
     {
-        printf("Error opening file!");
-        exit(1);
+        file = fopen("password.txt", "w+");
+        if(file == NULL)
+        {
+            printf("Error opening file!");
+            exit(1);
+        }
     }
 }
 
 FILE *openAuxFile()
 {
-    FILE *auxFile = fopen("aux.txt", "w");
+    FILE *auxFile = fopen("aux.txt", "w+");
 
     if (auxFile == NULL)
     {
@@ -154,7 +158,7 @@ void deletePassword()
 
     if (passwordCounter == passwordFound)
     {
-        printf("Password not found!\n\n");
+        printf("\nPassword not found!\n\n");
     }
 
     fclose(file);
@@ -204,7 +208,7 @@ void editPassword()
 
     if (passwordCounter == passwordFound)
     {
-        printf("Password not found!\n\n");
+        printf("\nPassword not found!\n\n");
     }
 
     fclose(file);
@@ -220,12 +224,12 @@ void listPasswords()
     char password[LEN];
     clearArray(password, LEN);
 
+    printf("\n--------- PASSWORDS ---------\n");
     while (fgets(password, LEN, file) != NULL)
     {
-        printf("\n --- PASSWORDS ---\n");
-        printf("%s\n", password);
-        printf("-----------------\n");
+        printf("%s", password);
     }
+    printf("-----------------------------\n\n");
 
     fclose(file);
 }
@@ -234,6 +238,7 @@ void viewPassword()
 {
     openPasswordFile("r");
 
+    int passwordFound = 0;
     char location[LEN], password[LEN], splittedString[LEN];
     clearArray(location, LEN);
     printf("Type location of password to view: \n");
@@ -248,12 +253,16 @@ void viewPassword()
 
         if (!strcmp(splittedString, location))
         {
+            printf("\n--------- PASSWORD ---------\n");
             printf("%s", password);
+            printf("----------------------------\n\n");
+            passwordFound++;
         }
-        else
-        {
-            printf("Password not found!\n\n");
-        }
+    }
+
+    if (!passwordFound)
+    {
+        printf("\nPassword not found!\n\n");
     }
 }
 
@@ -269,6 +278,7 @@ void menu()
         printf("4. List Passwords\n");
         printf("5. View Password\n");
         printf("6. Generate Password\n");
+        printf("7. Clear Screen\n");
         printf("0. Exit\n");
         scanf("%d", &choice);
 
@@ -292,6 +302,9 @@ void menu()
         case 6:
             generatePassword();
             break;
+        case 7:
+            system("clear");
+            break;
         case 0:
             return;
         default:
@@ -303,6 +316,7 @@ void menu()
 
 int main(void)
 {
+    system("clear");
     menu();
 
     return (0);
