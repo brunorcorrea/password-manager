@@ -34,7 +34,7 @@ void deleteFile(char *fileName)
 {
     if (remove(fileName) != 0)
     {
-        printf("The file was not deleted.\n\n");
+        printf("The file is not deleted.");
     }
 }
 
@@ -43,7 +43,7 @@ void renameFile(char *oldName, char *newName)
     int result = rename(oldName, newName);
     if (result != 0)
     {
-        printf("The file is renamed successfully.\n\n");
+        printf("The file is renamed successfully.");
     }
 }
 
@@ -75,7 +75,6 @@ void savePassword(char *password)
     printf("\n%s", data);
 
     fclose(file);
-    printf("Password saved!\n\n");
 }
 
 void generatePassword()
@@ -115,7 +114,7 @@ void generatePassword()
     savePassword(password);
 }
 
-void saveNewPassword()
+void createNewPassword() // TODO rethink function name
 {
     char password[100], c;
     clearArray(password, 100);
@@ -123,14 +122,13 @@ void saveNewPassword()
     printf("Enter password: ");
     scanf("%s", password);
 
-    savePassword(password);
+    savePassword(password); // TODO show message confirming password saved
 }
 
 void deletePassword()
 {
     openPasswordFile("r+");
     FILE *aux = openAuxFile();
-    int passwordCounter = 0, passwordFound = 0;
 
     char location[LEN], password[LEN], splittedString[LEN];
     clearArray(location, LEN);
@@ -147,15 +145,10 @@ void deletePassword()
         if (strcmp(splittedString, location))
         {
             fputs(password, aux);
-            passwordFound++;
         }
-        passwordCounter++;
     }
 
-    if (passwordCounter == passwordFound)
-    {
-        printf("Password not found!\n\n");
-    }
+    //TODO show error message if password not found
 
     fclose(file);
     deleteFile("password.txt");
@@ -163,12 +156,10 @@ void deletePassword()
     fclose(aux);
 }
 
-void editPassword()
-{
+void editPassword() {
     openPasswordFile("r+");
     FILE *aux = openAuxFile();
 
-    int passwordCounter = 0, passwordFound = 0;
     char location[LEN], password[LEN], splittedString[LEN], newPassword[100], data[255];
     clearArray(location, LEN);
     clearArray(data, LEN);
@@ -190,22 +181,13 @@ void editPassword()
             strcat(data, ":");
             strcat(data, newPassword);
             strcat(data, "\n");
-
+        
             fputs(data, aux);
         }
-        else
-        {
-            passwordFound++;
-            fputs(password, aux);
-        }
-
-        passwordCounter++;
+        else fputs(password, aux);
     }
 
-    if (passwordCounter == passwordFound)
-    {
-        printf("Password not found!\n\n");
-    }
+    //TODO show error message if password not found
 
     fclose(file);
     deleteFile("password.txt");
@@ -213,8 +195,7 @@ void editPassword()
     fclose(aux);
 }
 
-void listPasswords()
-{
+void listPasswords() {
     openPasswordFile("r");
 
     char password[LEN];
@@ -222,16 +203,13 @@ void listPasswords()
 
     while (fgets(password, LEN, file) != NULL)
     {
-        printf("\n --- PASSWORDS ---\n");
-        printf("%s\n", password);
-        printf("-----------------\n");
+        printf("%s", password);
     }
 
     fclose(file);
 }
 
-void viewPassword()
-{
+void viewPassword() {
     openPasswordFile("r");
 
     char location[LEN], password[LEN], splittedString[LEN];
@@ -250,11 +228,9 @@ void viewPassword()
         {
             printf("%s", password);
         }
-        else
-        {
-            printf("Password not found!\n\n");
-        }
     }
+
+    //TODO show error message if password not found
 }
 
 void menu()
@@ -275,7 +251,7 @@ void menu()
         switch (choice)
         {
         case 1:
-            saveNewPassword();
+            createNewPassword();
             break;
         case 2:
             deletePassword();
